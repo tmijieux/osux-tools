@@ -1,0 +1,10 @@
+# List of source files which contain translatable strings.
+src/dbctl/cmdline.c
+src/dbctl/dbctl.c
+src/dbctl/cmdline.h
+src/parsers/beatmap_parser.c
+src/parsers/parse_replay.c
+src/taiko/generator_cmdline.c
+src/taiko/converter.c
+src/taiko/generator_cmdline.h
+src/taiko/generator.c
