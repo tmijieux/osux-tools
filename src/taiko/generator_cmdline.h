@@ -52,6 +52,9 @@ struct gengetopt_args_info
   int nb_ho_arg;	/**< @brief Set the number of hitobject in the beatmap (default='128').  */
   char * nb_ho_orig;	/**< @brief Set the number of hitobject in the beatmap original value given at command line.  */
   const char *nb_ho_help; /**< @brief Set the number of hitobject in the beatmap help description.  */
+  int nb_pattern_arg;	/**< @brief Set the number of time the pattern is repeated (default='-1').  */
+  char * nb_pattern_orig;	/**< @brief Set the number of time the pattern is repeated original value given at command line.  */
+  const char *nb_pattern_help; /**< @brief Set the number of time the pattern is repeated help description.  */
   double bpm_arg;	/**< @brief Set the bpm for the beatmap (default='160.').  */
   char * bpm_orig;	/**< @brief Set the bpm for the beatmap original value given at command line.  */
   const char *bpm_help; /**< @brief Set the bpm for the beatmap help description.  */
@@ -72,6 +75,7 @@ struct gengetopt_args_info
   unsigned int artist_given ;	/**< @brief Whether artist was given.  */
   unsigned int pattern_given ;	/**< @brief Whether pattern was given.  */
   unsigned int nb_ho_given ;	/**< @brief Whether nb-ho was given.  */
+  unsigned int nb_pattern_given ;	/**< @brief Whether nb-pattern was given.  */
   unsigned int bpm_given ;	/**< @brief Whether bpm was given.  */
   unsigned int abpm_given ;	/**< @brief Whether abpm was given.  */
   unsigned int od_given ;	/**< @brief Whether od was given.  */

@@ -95,6 +95,16 @@ static int str_has_char(const char *s, char c)
     return 0;
 }
 
+static uint32_t pattern_length(const char *pattern)
+{
+    static char *allowed = "dDkK";
+    uint32_t length = 0;
+    for (int i = 0; pattern[i] != '\0'; ++i)
+        if (str_has_char(allowed, pattern[i]))
+            ++length;
+    return length;
+}
+
 static void tg_check_pattern(const struct taiko_generator *tg)
 {
     static char *allowed = "dDkK_";
@@ -311,7 +321,20 @@ int main(int argc, char *argv[])
 	fprintf(stderr, "OD must be in [0, 10]\n");
 	exit(EXIT_FAILURE);
     }
-    if (info.nb_ho_arg < 0.) {
+    if (info.nb_ho_given && info.nb_pattern_given) {
+        fprintf(stderr, "Incompatible options: nb-ho and nb-pattern\n");
+        exit(EXIT_FAILURE);
+    }
+    if (info.nb_pattern_given) {
+        if (info.nb_pattern_arg < 0.) {
+            fprintf(stderr, "Number of repeated patterns must be positive\n");
+            exit(EXIT_FAILURE);
+        }
+        uint32_t length = pattern_length(info.pattern_arg);
+        info.nb_ho_arg = length * info.nb_pattern_arg;
+        info.nb_ho_given = 1;
+    }
+    if (info.nb_ho_given && info.nb_ho_arg < 0.) {
 	fprintf(stderr, "Number of hitobjects must be positive\n");
 	exit(EXIT_FAILURE);
     }

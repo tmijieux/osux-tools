@@ -41,6 +41,7 @@ const char *gengetopt_args_info_help[] = {
   "  -A, --artist=STRING      Set the beatmap artist  (default=`Test')",
   "  -p, --pattern=STRING     Set the pattern repeated along the beatmap",
   "  -n, --nb-ho=INT          Set the number of hitobject in the beatmap\n                             (default=`128')",
+  "  -m, --nb-pattern=INT     Set the number of time the pattern is repeated\n                             (default=`-1')",
   "  -b, --bpm=DOUBLE         Set the bpm for the beatmap  (default=`160.')",
   "  -a, --abpm=DOUBLE        Set the apparent bpm, by default same as bpm\n                             (default=`-1.')",
   "  -o, --od=DOUBLE          Set the overall difficulty  (default=`5.')",
@@ -79,6 +80,7 @@ void clear_given (struct gengetopt_args_info *args_info)
   args_info->artist_given = 0 ;
   args_info->pattern_given = 0 ;
   args_info->nb_ho_given = 0 ;
+  args_info->nb_pattern_given = 0 ;
   args_info->bpm_given = 0 ;
   args_info->abpm_given = 0 ;
   args_info->od_given = 0 ;
@@ -97,6 +99,8 @@ void clear_args (struct gengetopt_args_info *args_info)
   args_info->pattern_orig = NULL;
   args_info->nb_ho_arg = 128;
   args_info->nb_ho_orig = NULL;
+  args_info->nb_pattern_arg = -1;
+  args_info->nb_pattern_orig = NULL;
   args_info->bpm_arg = 160.;
   args_info->bpm_orig = NULL;
   args_info->abpm_arg = -1.;
@@ -120,10 +124,11 @@ void init_args_info(struct gengetopt_args_info *args_info)
   args_info->artist_help = gengetopt_args_info_help[4] ;
   args_info->pattern_help = gengetopt_args_info_help[5] ;
   args_info->nb_ho_help = gengetopt_args_info_help[6] ;
-  args_info->bpm_help = gengetopt_args_info_help[7] ;
-  args_info->abpm_help = gengetopt_args_info_help[8] ;
-  args_info->od_help = gengetopt_args_info_help[9] ;
-  args_info->random_help = gengetopt_args_info_help[10] ;
+  args_info->nb_pattern_help = gengetopt_args_info_help[7] ;
+  args_info->bpm_help = gengetopt_args_info_help[8] ;
+  args_info->abpm_help = gengetopt_args_info_help[9] ;
+  args_info->od_help = gengetopt_args_info_help[10] ;
+  args_info->random_help = gengetopt_args_info_help[11] ;
 
 }
 
@@ -214,6 +219,7 @@ cmdline_parser_release (struct gengetopt_args_info *args_info)
   free_string_field (&(args_info->pattern_arg));
   free_string_field (&(args_info->pattern_orig));
   free_string_field (&(args_info->nb_ho_orig));
+  free_string_field (&(args_info->nb_pattern_orig));
   free_string_field (&(args_info->bpm_orig));
   free_string_field (&(args_info->abpm_orig));
   free_string_field (&(args_info->od_orig));
@@ -262,6 +268,8 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "pattern", args_info->pattern_orig, 0);
   if (args_info->nb_ho_given)
     write_into_file(outfile, "nb-ho", args_info->nb_ho_orig, 0);
+  if (args_info->nb_pattern_given)
+    write_into_file(outfile, "nb-pattern", args_info->nb_pattern_orig, 0);
   if (args_info->bpm_given)
     write_into_file(outfile, "bpm", args_info->bpm_orig, 0);
   if (args_info->abpm_given)
@@ -559,6 +567,7 @@ cmdline_parser_internal (
         { "artist",	1, NULL, 'A' },
         { "pattern",	1, NULL, 'p' },
         { "nb-ho",	1, NULL, 'n' },
+        { "nb-pattern",	1, NULL, 'm' },
         { "bpm",	1, NULL, 'b' },
         { "abpm",	1, NULL, 'a' },
         { "od",	1, NULL, 'o' },
@@ -566,7 +575,7 @@ cmdline_parser_internal (
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVqd:A:p:n:b:a:o:r:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVqd:A:p:n:m:b:a:o:r:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -638,6 +647,18 @@ cmdline_parser_internal (
               &(local_args_info.nb_ho_given), optarg, 0, "128", ARG_INT,
               check_ambiguity, override, 0, 0,
               "nb-ho", 'n',
+              additional_error))
+            goto failure;
+
+          break;
+        case 'm':	/* Set the number of time the pattern is repeated.  */
+
+
+          if (update_arg( (void *)&(args_info->nb_pattern_arg),
+               &(args_info->nb_pattern_orig), &(args_info->nb_pattern_given),
+              &(local_args_info.nb_pattern_given), optarg, 0, "-1", ARG_INT,
+              check_ambiguity, override, 0, 0,
+              "nb-pattern", 'm',
               additional_error))
             goto failure;
 
